@@ -1,0 +1,76 @@
+<project name="Nocode2Showpp" default="compile" basedir=".">
+
+  <property name = "src.dir" location = "src"/>
+  <property name = "build.dir" location = "build"/>
+  <property name = "doc.dir" location = "doc"/>
+  <property name = "jar.dir"     value="${build.dir}/jar"/>
+
+    <target name = "init" depends = "clean">
+      <mkdir dir = "${build.dir}"/>
+      <mkdir dir = "${doc.dir}"/>
+    </target>
+
+    <target name = "compile" depends = "init">
+      <javac srcdir = "${src.dir}" destdir = "${build.dir}"  includeantruntime = "false" debug = "true">
+      </javac>
+    </target>
+
+    <target name="unchecked-compile" depends="init">
+          <javac srcdir="${src.dir}" destdir="${build.dir}" classpath="${jarfile}" includeantruntime="false" debug="true">
+           <compilerarg value="-Xlint:unchecked"/>
+          </javac>
+        </target>
+
+    <target name = "doccompile" depends = "compile, documentation"/>
+
+
+    <target name = "documentation" depends = "cleandocs">
+      <javadoc sourcepath="${src.dir}" destdir = "${doc.dir}" windowtitle = "ComplexAPI" version = "true" packagenames="nowhere2gopp.preset.*, nowhere2gopp.gamelogic.*, nowhere2gopp.gamelogic.player.*, nowhere2gopp.gamelogic.gameIO.*, nowhere2gopp.gamelogic.gameIO.Components* , nowhere2gopp.gamelogic.mainprogram.* " author = "true" use = "true" encoding = "UTF-8" docencoding = "UTF-8" charset = "UTF-8" private = "true">
+        <fileset dir="${src.dir}" defaultexcludes="yes">
+          <include name = "**/*.java"/>
+        </fileset>
+      </javadoc>
+    </target>
+
+    <target name = "build-jar" depends = "doccompile">
+       <jar destfile = "Nocode2Show.jar"
+          basedir = "${build.dir}/">
+          <include name = "**/**"/>
+          <manifest>
+             <attribute name = "Main-Class" value = "nowhere2gopp.gamelogic.mainprogram.Nowhere2gopp"/>
+          </manifest>
+       </jar>
+       <exec executable="chmod">
+         <arg value="755"/>
+         <arg value="Nocode2Show.jar"/>
+       </exec>
+    </target>
+
+  <target name = "build+run" depends = "build-jar, run"/>
+
+    <target name = "run">
+      <java jar="${ant.project.name}.jar" fork="true">
+        <arg value = "loading" />
+        <arg value = "--online" />
+        <arg value = "-size" />
+        <arg value = "1" />
+        <arg value = "-red" />
+        <arg value = "random" />
+        <arg value = "-blue" />
+        <arg value = "random" />
+        <arg value = "-delay" />
+        <arg value = "3" />
+      </java>
+    </target>
+
+    <target name = "clean">
+      <delete dir = "${build.dir}"/>
+      <delete dir = "${doc.dir}"/>
+    </target>
+
+    <target name = "cleandocs">
+      <delete dir = "${doc.dir}"/>
+    </target>
+
+
+</project>
